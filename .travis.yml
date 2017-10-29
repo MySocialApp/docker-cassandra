@@ -1,0 +1,22 @@
+sudo: required
+
+language: ruby
+
+env:
+  - PROJECT_ID="mysocialapp" CASSANDRA_VERSION="3.11.1" VERSION=$CASSANDRA_VERSION
+
+services:
+  - docker
+
+before_install:
+  - echo "Ensure this version does not already exist"
+  - test $(curl -s https://quay.io/api/v1/repository/$PROJECT_ID/cassandra/tag/ | jq ".tags[] | select(.name == \"$CASSANDRA_VERSION\") | select(.end_ts == null) | .name" | wc -l) -eq 0
+  - git submodule update --init
+
+script:
+  - sed -i 's#http://ftp#ftp#' docker-cassandra-k8s/Dockerfile
+  - cd docker-cassandra-k8s && make docker
+
+after_success:
+  - docker login -u="$QUAY_USERNAME" -p="$QUAY_PASSWORD" quay.io
+  - make push

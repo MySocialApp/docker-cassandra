@@ -1,0 +1,3 @@
+[submodule "docker-cassandra-k8s"]
+	path = docker-cassandra-k8s
+	url = https://github.com/k8s-for-greeks/docker-cassandra-k8s.git
