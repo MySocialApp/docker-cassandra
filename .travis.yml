@@ -3,14 +3,14 @@ sudo: required
 language: ruby
 
 env:
-  - PROJECT_ID="mysocialapp" CASSANDRA_VERSION="3.11.1" VERSION=$CASSANDRA_VERSION DEV_CONTAINER=yes
+  - PROJECT_ID="mysocialapp" CASSANDRA_VERSION="3.11.1" VERSION=${CASSANDRA_VERSION} DEV_CONTAINER=yes
 
 services:
   - docker
 
 before_install:
   - echo "Ensure this version does not already exist"
-  - test $(curl -s https://quay.io/api/v1/repository/$PROJECT_ID/cassandra/tag/ | jq ".tags[] | select(.name == \"$CASSANDRA_VERSION\") | select(.end_ts == null) | .name" | wc -l) -eq 0
+  - test $(curl -s https://quay.io/api/v1/repository/$PROJECT_ID/cassandra/tag/ | jq ".tags[] | select(.name == \"$VERSION\") | select(.end_ts == null) | .name" | wc -l) -eq 0
   - git submodule update --init
 
 script:
