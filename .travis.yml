@@ -9,8 +9,6 @@ services:
   - docker
 
 before_install:
-  - echo "Ensure this version does not already exist"
-  - test $(curl -s https://quay.io/api/v1/repository/$PROJECT_ID/cassandra/tag/ | jq ".tags[] | select(.name == \"$VERSION\") | select(.end_ts == null) | .name" | wc -l) -eq 0
   - git submodule update --init
 
 script:
@@ -20,5 +18,6 @@ script:
   - cd docker-cassandra-k8s && make docker
 
 after_success:
+  - test $(curl -s https://quay.io/api/v1/repository/$PROJECT_ID/cassandra/tag/ | jq ".tags[] | select(.name == \"$VERSION\") | select(.end_ts == null) | .name" | wc -l) -eq 0 || echo "Container tag $VERSION already exist, cancelling push to avoid override"
   - docker login -u="$QUAY_USERNAME" -p="$QUAY_PASSWORD" quay.io
   - make push
