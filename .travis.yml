@@ -3,7 +3,7 @@ sudo: required
 language: ruby
 
 env:
-  - PROJECT_ID="mysocialapp" CASSANDRA_VERSION="3.11.1" VERSION=${CASSANDRA_VERSION}-1 DEV_CONTAINER=yes
+  - PROJECT_ID="mysocialapp" CASSANDRA_VERSION="3.11.1" VERSION=${CASSANDRA_VERSION}-2 DEV_CONTAINER=yes
 
 services:
   - docker
@@ -12,12 +12,20 @@ before_install:
   - git submodule update --init
 
 script:
+  - echo "[+] Building Cassandra image"
   - sed -i 's#http://ftp#ftp#' docker-cassandra-k8s/Dockerfile
   - sed -i "s/CASSANDRA_RELEASE=.*/CASSANDRA_RELEASE=${CASSANDRA_VERSION} \\\/" docker-cassandra-k8s/Dockerfile
   - sed -i "s/wget \\\/wget \\\ \n \&\&    apt-get -y install python-pip\\\ \n    \&\& pip install cqlsh \\\/" docker-cassandra-k8s/Dockerfile
-  - cd docker-cassandra-k8s && make docker
+  - cd docker-cassandra-k8s && make docker && cd ..
+  - echo "[+] Building Cassandra backup image"
+  - sed -i "s/IMAGE_FROM_VERSION/${VERSION}/g" Dockerfile
+  - docker build -t quay.io/${PROJECT_ID}/cassandra-backup:${VERSION} .
 
 after_success:
   - test $(curl -s https://quay.io/api/v1/repository/$PROJECT_ID/cassandra/tag/ | jq ".tags[] | select(.name == \"$VERSION\") | select(.end_ts == null) | .name" | wc -l) -eq 0 || echo "Container tag $VERSION already exist, cancelling push to avoid override"
   - docker login -u="$QUAY_USERNAME" -p="$QUAY_PASSWORD" quay.io
-  - make push
+  - echo "Pushing Cassandra image"
+  - cd docker-cassandra-k8s && make push && cd ..
+  - echo "Pushing Cassandra backup image"
+  - docker push quay.io/${PROJECT_ID}/cassandra-backup:${VERSION}
+

@@ -1,3 +1,6 @@
 [submodule "docker-cassandra-k8s"]
 	path = docker-cassandra-k8s
 	url = https://github.com/k8s-for-greeks/docker-cassandra-k8s.git
+[submodule "docker-backup-common"]
+	path = docker-backup-common
+	url = https://github.com/MySocialApp/docker-backup-common.git
