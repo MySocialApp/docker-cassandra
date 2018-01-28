@@ -3,7 +3,7 @@ sudo: required
 language: ruby
 
 env:
-  - PROJECT_ID="mysocialapp" CASSANDRA_VERSION="3.11.1" VERSION=${CASSANDRA_VERSION}-3 DEV_CONTAINER=yes
+  - PROJECT_ID="mysocialapp" CASSANDRA_VERSION="3.11.1" VERSION=${CASSANDRA_VERSION}-4 DEV_CONTAINER=yes
 
 services:
   - docker
