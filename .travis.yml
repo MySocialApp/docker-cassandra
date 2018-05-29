@@ -3,7 +3,7 @@ sudo: required
 language: ruby
 
 env:
-  - PROJECT_ID="mysocialapp" CASSANDRA_VERSION="3.11.1" VERSION=${CASSANDRA_VERSION}-7 CASSANDRA_SHA="6feed696759e2f3219e0ebde13f4c9080cac0744a77eb3cb43af136ab527f0ed" DEV_CONTAINER=yes
+  - PROJECT_ID="mysocialapp" CASSANDRA_VERSION="3.11.1" VERSION=${CASSANDRA_VERSION}-8 CASSANDRA_SHA="6feed696759e2f3219e0ebde13f4c9080cac0744a77eb3cb43af136ab527f0ed" DEV_CONTAINER=yes
 
 services:
   - docker
@@ -16,7 +16,7 @@ script:
   - sed -i "s/CASSANDRA_RELEASE=.*/CASSANDRA_RELEASE=${CASSANDRA_VERSION} \\\/" docker-cassandra-k8s/Dockerfile
   - sed -i "s/CASSANDRA_SHA=.*/CASSANDRA_SHA=${CASSANDRA_SHA} \\\/" docker-cassandra-k8s/Dockerfile
   - echo -e "[cql]\nversion = 3.4.4\n\n[connection]\nrequest_timeout = 300" > docker-cassandra-k8s/files/cqlshrc
-  - echo -e "#!/bin/bash\ncd /usr/local/apache-cassandra/bin/\n./nodetool" > docker-cassandra-k8s/files/nodetool.sh
+  - echo -e '#!/bin/bash\ncd /usr/local/apache-cassandra/bin/\n./nodetool $@' > docker-cassandra-k8s/files/nodetool.sh
   - sed -i "s/jq \\\/jq \\\ \n    \&\& apt-get -y install python-pip dh-autoreconf \\\ \n    \&\& pip install cqlsh \\\ \n  \&\&   mkdir \/root\/.cassandra \&\& mv \/cqlshrc \/root\/.cassandra\/ \&\& chmod 755 \/nodetool.sh \&\& mv \/nodetool.sh \/usr\/bin\/nodetool \\\/" docker-cassandra-k8s/Dockerfile
   - sed -i "s/ --squash//g" docker-cassandra-k8s/Makefile
   - cd docker-cassandra-k8s && make docker && cd ..
