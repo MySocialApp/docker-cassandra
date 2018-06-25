@@ -3,7 +3,7 @@ sudo: required
 language: ruby
 
 env:
-  - PROJECT_ID="mysocialapp" CASSANDRA_VERSION="3.11.1" VERSION=${CASSANDRA_VERSION}-8 CASSANDRA_SHA="6feed696759e2f3219e0ebde13f4c9080cac0744a77eb3cb43af136ab527f0ed" DEV_CONTAINER=yes
+  - PROJECT_ID="mysocialapp" CASSANDRA_VERSION="3.11.1" VERSION=${CASSANDRA_VERSION}-9 CASSANDRA_SHA="6feed696759e2f3219e0ebde13f4c9080cac0744a77eb3cb43af136ab527f0ed" DEV_CONTAINER=yes
 
 services:
   - docker
@@ -19,6 +19,7 @@ script:
   - echo -e '#!/bin/bash\ncd /usr/local/apache-cassandra/bin/\n./nodetool $@' > docker-cassandra-k8s/files/nodetool.sh
   - sed -i "s/jq \\\/jq \\\ \n    \&\& apt-get -y install python-pip dh-autoreconf \\\ \n    \&\& pip install cqlsh \\\ \n  \&\&   mkdir \/root\/.cassandra \&\& mv \/cqlshrc \/root\/.cassandra\/ \&\& chmod 755 \/nodetool.sh \&\& mv \/nodetool.sh \/usr\/bin\/nodetool \\\/" docker-cassandra-k8s/Dockerfile
   - sed -i "s/ --squash//g" docker-cassandra-k8s/Makefile
+  - cp run.sh docker-cassandra-k8s/files/
   - cd docker-cassandra-k8s && make docker && cd ..
   - echo "[+] Building Cassandra backup image"
   - sed -i "s/IMAGE_FROM_VERSION/${VERSION}/g" Dockerfile
