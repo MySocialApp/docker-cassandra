@@ -248,6 +248,5 @@ echo "/etc/resolv.conf"
 cat /etc/resolv.conf
 
 echo "$CASSANDRA_CFG"
-cat $CASSANDRA_CFG
 
 su cassandra -c "$CASSANDRA_BIN -f"
