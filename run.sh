@@ -119,7 +119,7 @@ fi
 #fi
 
 if [ -n "$CASSANDRA_REPLACE_NODE" ]; then
-   echo "-Dcassandra.replace_address=$CASSANDRA_REPLACE_NODE/" >> "$CASSANDRA_CONF_DIR/jvm.options"
+   echo "-Dcassandra.replace_address=$CASSANDRA_REPLACE_NODE" >> "$CASSANDRA_CONF_DIR/jvm.options"
 fi
 
 for rackdc in dc rack; do
